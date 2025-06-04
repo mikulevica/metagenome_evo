@@ -54,9 +54,24 @@ def perposition_scores(seqs,
 
 
 def complement_5_strand(seq):
+    '''
+    reeturns a reverse complement for a sequence in 5' to 3' orientation
+    '''
     output=""
     bases={"A":"T", "C":"G", "G":"C", "T":"A"}
     for i in seq:
         output+=bases[i]
 
     return output[::-1]
+
+
+def remove_gaps(gapp):
+    '''
+    removes gaps from a sequence in the alignmnet
+    '''
+    output=""
+    for i in gapp:
+        if i != "-":
+            output+=i
+
+    return output
