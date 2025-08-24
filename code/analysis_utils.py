@@ -397,7 +397,7 @@ def create_data_frame_ortho(collection, tail_det, bp=200):
         
     def comp_delta(key,key1,key2):
             comparison[key].append(overview[key1][index]<overview[key2][index])
-            comparison[key"_n"].append(abs(overview[key1][index]-overview[key2][index]))
+            comparison[key+"_n"].append(abs(overview[key1][index]-overview[key2][index]))
             
     
     overview=initiation_ortholog()
@@ -451,7 +451,7 @@ def create_data_frame_ortho(collection, tail_det, bp=200):
 
     return output
 
-def get_pre_rec_data(df_data, a, k)
+def get_pre_rec_data(df_data, a, k):
     pre=[]
     ret=[]
     for i in a:
