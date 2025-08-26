@@ -9,6 +9,7 @@ from tqdm import tqdm
 from Bio import SeqIO
 from Bio.Seq import Seq
 import re
+from generating_utils import remove_gaps
 
 def read_fasta(file_path):
     '''
@@ -55,7 +56,7 @@ def print_results(df):
             print(i,":",df[i].to_list().count(True),"/",len(df),"=",
                                      df[i].to_list().count(True)/len(df))
 
-def convert_data(col_h, col_t, col_s, ht_i, s_i, df_s):
+def convert_data(col_h, col_s, ht_i, s_i, df_s):
     '''
     restructures data to be suitable for the analysis
     order: [[real_FW,real_RC], [con_FW, con_RC],
@@ -131,8 +132,8 @@ def initiation(tail_len):
     # order [which sequence, what part of it]
     "seq1_full":[(0,0),(0,1000+tail_len)],"seq2_full":[(1,0),(0,1000+tail_len)],
     "head_sc":[(2,0),(0,1000)], "head_sc_200":[(2,0),(800,1000)],
-    "head1_score":[(0,1),(0,1000)],"head1_score_200":[(0,1),(800,1000)],
-    "head2_score":[(1,1),(0,1000)],"head2_score_200":[(1,1),(800,1000)],
+    "head1_score":[(0,1),(0,1000-10)],"head1_score_200":[(0,1),(800-10,1000-10)],
+    "head2_score":[(1,1),(0,1000-10)],"head2_score_200":[(1,1),(800-10,1000-10)],
     "tail1_score":[(0,0),(1000,1000+tail_len)],"tail1_score_200":[(0,0),(1000,1200)],
     "tail2_score":[(1,0),(1000,1000+tail_len)],"tail2_score_200":[(1,0),(1000,1200)],
      }
@@ -331,7 +332,7 @@ def init_each_ortho(length, cut_site):
     keys_ave={
     # order [which sequence, what part of it]
     "seq1_full":[(0,0),(0,length)],"seq2_full":[(1,0),(0,length)],
-    "head_sc":[(2,1),(0,cut_site)], "head_sc_200":[(2,1),(cut_site-200,cut_site)],
+    "head_sc":[(2,0),(0,cut_site)], "head_sc_200":[(2,0),(cut_site-200,cut_site)],
     "head1_score":[(0,1),(0,cut_site)],"head1_score_200":[(0,1),(cut_site-200,cut_site)],
     "head2_score":[(1,1),(0,cut_site)],"head2_score_200":[(1,1),(cut_site-200,cut_site)],
     "tail1_score":[(0,0),(cut_site,length)],"tail1_score_200":[(0,0),(cut_site,cut_site+200)],
@@ -460,3 +461,7 @@ def get_pre_rec_data(df_data, a, k):
         ret.append(len(df))
     return pre, ret
     
+def print_results(df):
+    for i in df.columns:
+        if df[i].dtype == bool:
+             print(i,":",df[i].to_list().count(True),"/",len(df),"=",df[i].to_list().count(True)/len(df))    
