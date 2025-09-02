@@ -75,3 +75,49 @@ def remove_gaps(gapp):
             output+=i
 
     return output
+    
+def parse_genbank_to_dataframe(filepath):
+    """
+    Parses a GenBank file to extract gene information and returns a pandas DataFrame.
+
+    :param filepath: str
+        The file path to the GenBank file.
+    :return: pd.DataFrame
+        A DataFrame containing gene information.
+    """
+    gene_data = {'Gene': [], 'Length': [], 'Strand': [], 'Type': [], 'Number': [],'Start': [], 'End': []}
+    with open(filepath, 'r') as file:
+        genome_record = SeqIO.read(file, 'genbank')
+        
+        for i, feature in enumerate(genome_record.features):
+             if (feature.type!="gene") & (feature.type!="source"):
+                try:
+                    gene_name = feature.qualifiers.get('gene', [f'Unk_{i}'])[0]
+                    
+                except KeyError:
+                    gene_name = np.nan
+                try:
+                    db_xref = feature.qualifiers["db_xref"]
+                    gene_number=[xref.split(":")[1] for xref in db_xref if xref.startswith("UniProtKB/Swiss-Prot:")]
+                    if len(gene_number)==1:
+                        gene_number=gene_number[0]
+                    else:
+                        gene_number= np.nan
+                except KeyError:
+                    gene_number= np.nan
+                    
+                start, end = feature.location.start, feature.location.end
+                gene_length = end - start
+                strand = feature.location.strand
+        
+                gene_data['Gene'].append(gene_name)
+                gene_data['Number'].append(gene_number)
+                gene_data['Length'].append(gene_length)
+                gene_data['Strand'].append(strand)
+                gene_data['Start'].append(start)
+                gene_data['End'].append(end)
+                gene_data['Type'].append(feature.type)
+            
+    genome_DF = pd.DataFrame(gene_data)
+    genome_DF['Strand'] = genome_DF['Strand'].map({1: 'FW', -1: 'RC'})
+    return genome_DF
