@@ -10,6 +10,8 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 import re
 from generating_utils import remove_gaps
+import holoviews as hv
+from bokeh.palettes import Bokeh
 
 def read_fasta(file_path):
     '''
