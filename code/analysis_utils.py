@@ -464,4 +464,27 @@ def get_pre_rec_data(df_data, a, k):
 def print_results(df):
     for i in df.columns:
         if df[i].dtype == bool:
-             print(i,":",df[i].to_list().count(True),"/",len(df),"=",df[i].to_list().count(True)/len(df))    
+             print(i,":",df[i].to_list().count(True),"/",len(df),"=",df[i].to_list().count(True)/len(df))   
+
+
+def create_dataframe_violin(data_dict,what,what_group):
+    combined_data = []
+    combined_labels = []
+    
+    for label, data in data_dict.items():
+        combined_data.extend(data)
+        combined_labels.extend([label] * len(data))
+    
+    df = pd.DataFrame({
+        what: combined_data,
+        what_group: combined_labels
+    })
+    
+    return df
+
+def violin(dict,what_group,what):
+    df = create_dataframe_violin(dict,what, what_group)
+    violin_plot = hv.Violin(df,  kdims=what_group, vdims=what)
+    violin_plot.opts(hv.opts.Violin(width=800, height=400,tools=['hover'],violin_color=what_group,cmap = 
+Bokeh[6],padding=0.3))
+    return violin_plot
